@@ -80,6 +80,23 @@
             @endif
 
             <div class="content">
+              @if (session('message'))
+  <div class="container alert-messages pt-3">
+    <div class="alert alert-success">
+      {{ session('message') }}
+    </div>
+  </div>
+@endif
+@if ($errors->any())
+  <div class="container alert-messages pt-3">
+        @foreach ($errors->all() as $error)
+          <div class="alert alert-danger alert-dismissible">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <strong>Danger!</strong>   {{ $error }}
+          </div>
+        @endforeach
+    </div>
+@endif
                 <div class="title m-b-md">
                     Laravel
                 </div>
