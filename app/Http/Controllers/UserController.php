@@ -15,7 +15,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        return User::paginate(20);
+        return User::with('emails')->paginate(20);
     }
 
     /**
@@ -57,7 +57,7 @@ class UserController extends Controller
           ]);
           $emailEntity->save();
         }
-
+      //created user with emails
       $user->emails;
       return $user;
     }
