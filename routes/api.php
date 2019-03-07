@@ -12,3 +12,7 @@ use Illuminate\Http\Request;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+//user resource controller
+Route::resource('user', 'UserController')->only([
+    'index', 'store'
+]);
