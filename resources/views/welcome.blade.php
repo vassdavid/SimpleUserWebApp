@@ -5,26 +5,18 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
         <title>Interview Project</title>
+        <base href="/" target="_self">
 
-        <!-- Fonts -->
-        <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet">
 
         <!-- Styles -->
         <link href="{{asset('css/app.css')}}" media="all" rel="stylesheet" type="text/css" />
     </head>
     <body>
-        <div class="flex-center position-ref full-height">
-
-            <div class="content">
-
-                <div id="app">
-                  <div class="display-4 text-center mt-4">
-                    Loading...
-                  </div>
-                </div>
-
-            </div>
+      <div id="app">
+        <div class="display-4 text-center mt-4">
+          Loading...
         </div>
-         <script type="text/javascript" src="{{asset('js/app.js')}}"></script>
+      </div>
+     <script type="text/javascript" src="{{asset('js/app.js')}}"></script>
     </body>
 </html>
