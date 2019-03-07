@@ -71,17 +71,22 @@ export default {
     apiUrl: '/api/user',
   }),
   created() {
-    this.loader(1)
+    this.loader()
+  },
+  watch: {
+    '$route' (to, from) {
+      this.loader()
+    }
   },
   methods: {
     getPage(page){
-      this.loader(page)
+      this.loader(page);
     },
     linkGen (pageNum) {
       let cat = ''
       if(this.category > 0)
         cat = this.category + '/'
-      return '#users/page/' + pageNum
+      return '/#/users-page/' + pageNum
     },
     loader(page=0){
        let pager = ''
@@ -90,24 +95,26 @@ export default {
          if(this.$route.params.page)
           page = this.$route.params.page
        }
-       if( parseInt(page) > 0 ) {
+      // 404 =>  this.lastPage >= parseInt(page) > 0
+       if(parseInt(page) > 0 ) {
           pager += '?page=' + page
+       } else {
+         //bad format
        }
 
       //http request
-       axios.get(this.apiUrl + pager)
-       .then(response => {
-         // JSON responses are automatically parsed.
-         this.users = response.data.data
-         this.lastPage = response.data.last_page
-         this.path = response.data.path
-         this.currentPage = response.data.current_page
-       })
-       .catch(e => {
-         this.errors.push(e)
-         console.log(e)
-       })
-     },
+      axios.get(this.apiUrl + pager)
+      .then(response => {
+        // JSON responses are automatically parsed.
+        this.users = response.data.data
+        this.lastPage = response.data.last_page
+        this.path = response.data.path
+        this.currentPage = response.data.current_page
+      })
+     .catch(e => {
+       console.log(e)
+     })
+    },
   }
 }
 </script>
