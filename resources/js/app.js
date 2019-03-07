@@ -10,14 +10,48 @@ require('./bootstrap')
 window.Vue = require('vue')
 import Vue from 'vue'
 import BootstrapVue from 'bootstrap-vue'
+import { Pagination } from 'bootstrap-vue/es/components'
+Vue.use(Pagination)
 //router
 import VueRouter from 'vue-router'
 Vue.use(VueRouter)
 Vue.use(BootstrapVue)
 
+//components:
 const ListUsers = () => import('./components/ListUsers')
+const Main = () => import('./components/layout/Main')
+const LeftSidebar = () => import('./components/LeftSidebar')
+const CreateUser = () => import('./components/CreateUser')
+
+//registering components:
+Vue.component( 'ListUsers', ListUsers )
+Vue.component( 'Main', Main )
+Vue.component( 'LeftSidebar', LeftSidebar )
+Vue.component( 'CreateUser', CreateUser )
+
+
+const routes = [
+  {
+    path: '/',
+    component: ListUsers
+  },
+  {
+    path: '/users',
+    component: ListUsers
+  },
+  {
+    path: '/users-page/:page',
+    component: ListUsers,
+    name: 'userPager'
+  },
+]
+
+const router = new VueRouter({
+  routes
+})
 
 const app = new Vue({
     el: '#app',
-    render: h => h(ListUsers)
+    router,
+    render: h => h(Main)
 })
