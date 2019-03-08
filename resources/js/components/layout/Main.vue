@@ -5,7 +5,7 @@
         <LeftSidebar />
       </div>
 
-      <div id="content" class="offset-lg-3 offset-md-4 col-lg-9 col-md-8">
+      <div id="content" class="offset-lg-3 offset-md-4 col-lg-9 col-md-8 pt-3">
         <router-view />
       </div>
     </div>
