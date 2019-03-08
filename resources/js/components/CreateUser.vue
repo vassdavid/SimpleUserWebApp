@@ -10,7 +10,7 @@
           description="Let us know your name."
           label="Enter your name"
           label-for="input1"
-          invalid-feedback="invalid name"
+          :invalid-feedback="nameInvalidFeedback"
           valid-feedback="Thank you!"
           :state="nameState"
         >
@@ -37,7 +37,7 @@
             <b-form-group
               :id="'inputEmail' + index + 'Gr'"
               description="Let us know your email."
-              :label="'Enter your email ' + index+1 "
+              :label="'Enter your email ' + (index+1) "
               :label-for="'inputEmail' + index"
               invalid-feedback="Please give valid email"
               valid-feedback="Thank you!"
@@ -66,7 +66,6 @@
           </b-form-group>
         </div>
 
-
         </div>
           <button @click="addRow" class="my-3 btn btn-success">+ Add email</button>
         </div>
@@ -86,9 +85,11 @@
 export default {
   data() {
     return {
-      name: '',
-      dateOfBirth: '',
-      emails: [ ' ' ]
+      name: ' ',
+      dateOfBirth: ' ',
+      emails: [ ' ' ],
+      respErrors: [],
+      sendedData: []
     }
   },
   computed: {
@@ -106,15 +107,32 @@ export default {
       return state
     },
     nameState() {
-      return this.name.length > 2 ? true : false
+      let state = null
+      if( this.name != ' ' )
+        state = (!this.respErrors['name'] || ( this.sendedData['name'] && this.sendedData['name'] == this.name)) && this.name.length > 2
+      return state
     },
     dateState() {
+      if(this.dateOfBirth == ' ')
+         return null
       let date = new Date(this.dateOfBirth)
       return date.getTime() < Date.now()
     },
+    nameInvalidFeedback() {
+      let feedback = 'Invalid name format!'
+      if(this.respErrors['name']) {
+        feedback = '(name: ' + this.sendedData['name'] + ') error:'
+        $.each(this.respErrors['name'], function(key,err){
+          feedback += ' ' + err
+        })
+      }
+      return feedback
+    }
   },
   methods: {
     emailState(index) {
+      if(this.emails[index] == ' ')
+        return null
       let mailFormat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
         str = this.emails[index]
       return mailFormat.test(str)
@@ -134,18 +152,21 @@ export default {
      },
      onSubmit(evt) {
        evt.preventDefault()
+       this.sendedData = {
+             name: this.name,
+             date_of_birth: this.dateOfBirth,
+             emails: this.emails
+        }
        if(this.formState){
-         axios.post('/api/user', {
-               name: this.name,
-               date_of_birth: this.dateOfBirth,
-               emails: this.emails
-           })
+         axios.post('/api/user', this.sendedData)
            .then(function (response) {
                console.log(response.data)
            })
            .catch(function (error) {
-              console.log(error)
-           });
+             console.log(error.response.data)
+             if(error.response.data.errors)
+              this.respErrors = error.response.data.errors
+           }.bind(this));
        }
      },
   }
