@@ -39,8 +39,8 @@ class UserController extends Controller
       $data = $request->validate([
         'name'  => 'required|min:3|max:35|unique:users',
         'date_of_birth' =>  'date_format:"Y-m-d"|required',
-        "email"  =>  "required|array|min:1",
-        "email.*"  =>  "required|string|email|distinct",
+        "emails"  =>  "required|array|min:1",
+        "emails.*"  =>  "required|string|email|distinct",
       ]);
       //user model
       $user = new User([
@@ -49,7 +49,7 @@ class UserController extends Controller
       ]);
 
       if( $user->save() )
-        foreach( $data['email'] as $email ) {
+        foreach( $data['emails'] as $email ) {
           //email model
           $emailEntity = new Email([
             'user_id' => $user->id,
