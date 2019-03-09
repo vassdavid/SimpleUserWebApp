@@ -1,12 +1,12 @@
 <template>
-  <div id="users container">
+  <div id="users" class="container px-2">
     <h1>Users</h1>
     <div class=" row">
       <div class="col-sm-6 col-lg-4 col-xl-3 p-1" v-for="user in users">
 
         <div class="card user-card" >
 
-          <div class="card-header" >
+          <div class="card-header px-2" >
             {{user.name}}
           </div>
 
@@ -24,7 +24,7 @@
 
             <div class="row">
               <div class="col pl-1">
-                Email(s):
+                Email{{ user.emails.length > 1 ? 's' : '' }}:
               </div>
             </div>
             <div class="row">

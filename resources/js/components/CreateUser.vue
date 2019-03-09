@@ -259,7 +259,7 @@ export default {
               emails.push(value.email)
             })
             //make success message
-            this.alertSuccessMessage = 'new user: (name: ' + response.data.name + ', date of birth: ' + response.data.date_of_birth + ', emails: ' + emails.join() + ')'
+            this.alertSuccessMessage = 'new user: (name: ' + response.data.name + ', date of birth: ' + response.data.date_of_birth + ', emails: ' + emails.join(', ') + ')'
             //reset forms
             this.reset()
           }.bind(this))
