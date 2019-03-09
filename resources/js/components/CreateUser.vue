@@ -176,7 +176,11 @@ export default {
     nameInvalidFeedback() {
       let feedback = 'Invalid name format!'
       //get response errors
-      if(this.respErrors['name'] && this.sendedData['name'] != this.name) {
+      if (
+        this.respErrors['name']
+        &&
+        this.sendedData['name'] == this.name
+      ) {
         feedback = '(name: ' + this.sendedData['name'] + ') error:'
         $.each(this.respErrors['name'], function(key,err){
           feedback += ' ' + err
