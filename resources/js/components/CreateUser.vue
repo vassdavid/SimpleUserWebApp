@@ -44,7 +44,14 @@
           valid-feedback="Thank you!"
           :state="dateState"
         >
-          <b-form-input id="inputDoB" :state="dateState" type="date" v-model="dateOfBirth" trim />
+          <b-form-input
+            id="inputDoB"
+            :state="dateState"
+            type="date"
+            v-model="dateOfBirth"
+            min="1900-01-01"
+            trim
+          />
         </b-form-group>
 
         <!-- emails -->
@@ -56,7 +63,7 @@
               description="Let us know your email."
               :label="'Enter your email ' + (index+1) "
               :label-for="'inputEmail' + index"
-              invalid-feedback="Please give valid email"
+              :invalid-feedback="emailInvalidFeedback(index)"
               valid-feedback="Thank you!"
               :state="emailState(index)"
             >
@@ -126,10 +133,38 @@ export default {
       }
       return state
     },
+    emailsChanged() {
+      let change = false
+      //get changing var
+      if(this.sendedData.emails) {
+        if(this.sendedData.emails.length == this.emails.length)
+          $.each(this.sendedData.emails, function(key, email){
+            if(email != this.emails[key]) {
+              change = true
+              return false
+            }
+          }.bind(this))
+        else
+          change = true
+      }
+      return change
+    },
     nameState() {
       let state = null
       if( this.name != ' ' ) //default state
-        state = (!this.respErrors['name'] || ( this.sendedData['name'] && this.sendedData['name'] != this.name)) && this.name.length > 2
+        state = (
+          (
+            !this.respErrors['name']
+            ||
+            (
+              this.sendedData['name']
+              &&
+              this.sendedData['name'] != this.name
+            )
+          )
+          &&
+          this.name.length > 2
+        )
       return state
     },
     dateState() {
@@ -141,7 +176,7 @@ export default {
     nameInvalidFeedback() {
       let feedback = 'Invalid name format!'
       //get response errors
-      if(this.respErrors['name']) {
+      if(this.respErrors['name'] && this.sendedData['name'] != this.name) {
         feedback = '(name: ' + this.sendedData['name'] + ') error:'
         $.each(this.respErrors['name'], function(key,err){
           feedback += ' ' + err
@@ -156,7 +191,33 @@ export default {
         return null
       let mailFormat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
         str = this.emails[index]
-      return mailFormat.test(str)
+      return (
+        (
+          !this.respErrors['emails.'+index]
+          ||
+          this.emailsChanged
+        )
+        &&
+        mailFormat.test(str)
+        &&
+        !this.duplicatedEmail(index)
+      )
+    },
+    duplicatedEmail(index) {
+      return this.emails.indexOf(this.emails[index]) != this.emails.lastIndexOf(this.emails[index])
+    },
+    emailInvalidFeedback(index){
+      let feedback = 'Please give valid email'
+      //get response errors
+      if(this.respErrors['emails.'+index] && !this.emailsChanged) {
+        feedback = '(email '+ (index+1) +': ' + this.sendedData.emails[index] + ') error:'
+        $.each(this.respErrors['emails.'+index], function(key, err){
+          feedback += ' ' + err
+        })
+      } else if(this.duplicatedEmail(index)) {
+        feedback = 'Email is duplicated!'
+      }
+      return feedback
     },
     deleteRow(index) {
       if(this.emails.length > 1)
@@ -173,32 +234,37 @@ export default {
     onReset(evt) {
       evt.preventDefault()
       this.reset()
-     },
-     onSubmit(evt) {
+    },
+    onSubmit(evt) {
       evt.preventDefault()
+      //make nonrective
+      let emails = []
+      $.each(this.emails, function(key,email){
+        emails.push(email)
+      })
        //data state when send to server
       this.sendedData = {
         name: this.name,
         date_of_birth: this.dateOfBirth,
-        emails: this.emails
+        emails: emails
       }
       //set resp data to default
       this.alertDangerMessage = this.respErrors =  this.alertSuccessMessage = ' '
       //all form data is ready
-      if(this.formState){
+      if(this.formState) {
         axios.post('/api/user', this.sendedData)
           .then(function (response) {
-            console.log(response.data)
             let emails = []
             $.each(response.data.emails, function(key, value){
               emails.push(value.email)
             })
+            //make success message
             this.alertSuccessMessage = 'new user: (name: ' + response.data.name + ', date of birth: ' + response.data.date_of_birth + ', emails: ' + emails.join() + ')'
+            //reset forms
             this.reset()
           }.bind(this))
           .catch(function (error) {
-            console.log(error.response.data);
-            //store error
+            //store messages
             if(error.response.data.errors)
               this.respErrors = error.response.data.errors
             if(error.response.data.message)
