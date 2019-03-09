@@ -1,5 +1,5 @@
 <template>
-  <nav id="sidebar" class="navbar navbar-expand-md ">
+  <nav id="sidebar" class="navbar navbar-expand-md navbar-dark">
 
     <button
       class="navbar-toggler navbar-toggler-right"

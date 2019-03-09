@@ -2,9 +2,9 @@
   <div id="users container">
     <h1>Users</h1>
     <div class=" row">
-      <div class="col-md-4 p-1" v-for="user in users">
+      <div class="col-sm-6 col-lg-4 col-xl-3 p-1" v-for="user in users">
 
-        <div class="card" >
+        <div class="card user-card" >
 
           <div class="card-header" >
             {{user.name}}
@@ -13,26 +13,26 @@
           <div class="card-body container">
 
             <div class="row">
-              <div class="col-md-4">
+              <div class="col-6 pr-0 pl-1">
                 Date of birth:
               </div>
 
-              <div class="col-md-8">
+              <div class="col-6 px-0">
                 {{ user.date_of_birth }}
               </div>
             </div>
 
             <div class="row">
-              <div class="col-md-4">
+              <div class="col-6 pr-0 pl-1">
                 Email(s):
               </div>
 
-              <div class="col-md-8">
-                <ul>
-                  <li v-for="email in user.emails">
-                    {{email.email}}
-                  </li>
-                </ul>
+              <div class="col-6 px-0">
+
+                  <div v-for="email in user.emails">
+                    <a :href="'mailto:'+email.email">{{email.email}}</a>
+                  </div>
+
               </div>
             </div>
 
@@ -119,4 +119,5 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+
 </style>
