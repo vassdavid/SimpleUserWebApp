@@ -14,7 +14,7 @@
     </button>
 
     <div class="navbar-collapse collapse flex-column " id="navbarVert">
-        <a class="nav-link navbar-brand active" href="#">Home</a>
+        <a class="nav-link navbar-brand active" href="/#/">Home</a>
         <router-link class="nav-link" active-class="active" to="/users">Show Users</router-link>
         <router-link class="nav-link" active-class="active" to="/CreateUser">Create User</router-link>
     </div>
