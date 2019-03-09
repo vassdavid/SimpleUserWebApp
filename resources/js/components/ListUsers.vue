@@ -17,22 +17,19 @@
                 Date of birth:
               </div>
 
-              <div class="col-6 px-0">
+              <div class="col-6 pr-2 text-right">
                 {{ user.date_of_birth }}
               </div>
             </div>
 
             <div class="row">
-              <div class="col-6 pr-0 pl-1">
+              <div class="col pl-1">
                 Email(s):
               </div>
-
-              <div class="col-6 px-0">
-
-                  <div v-for="email in user.emails">
-                    <a :href="'mailto:'+email.email">{{email.email}}</a>
-                  </div>
-
+            </div>
+            <div class="row">
+              <div class="col-12 px-2 text-right" v-for="email in user.emails">
+                <a :href="'mailto:'+email.email">{{email.email}}</a>
               </div>
             </div>
 

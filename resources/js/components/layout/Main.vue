@@ -1,11 +1,11 @@
 <template>
   <div class="container-fluid">
     <div class="row">
-      <div id="LeftSidebar" class="col-lg-3 col-md-4 bg-secondary fixed-top h-md-100">
+      <div id="LeftSidebar" class="col-xl-2 col-md-3 bg-secondary fixed-top h-md-100">
         <LeftSidebar />
       </div>
 
-      <div id="content" class="offset-lg-3 offset-md-4 col-lg-9 col-md-8 pt-3">
+      <div id="content" class="offset-xl-2 offset-md-3 col-xl-10 col-md-9 pt-3">
         <router-view />
       </div>
     </div>
