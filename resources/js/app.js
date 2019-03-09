@@ -44,6 +44,11 @@ const routes = [
     component: ListUsers,
     name: 'userPager'
   },
+  {
+    path: '/CreateUser',
+    component: CreateUser,
+    name: 'CreateUser'
+  }
 ]
 
 const router = new VueRouter({
