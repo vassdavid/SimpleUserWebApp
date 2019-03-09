@@ -22,6 +22,7 @@ const ListUsers = () => import('./components/ListUsers')
 const Main = () => import('./components/layout/Main')
 const LeftSidebar = () => import('./components/LeftSidebar')
 const CreateUser = () => import('./components/CreateUser')
+const NotFound = () => import('./components/NotFound')
 
 //registering components:
 Vue.component( 'ListUsers', ListUsers )
@@ -48,7 +49,15 @@ const routes = [
     path: '/CreateUser',
     component: CreateUser,
     name: 'CreateUser'
-  }
+  },
+  {
+    path: '/404',
+    component: NotFound
+  },
+  {
+    path: '*',
+    redirect: '/404'
+  },
 ]
 
 const router = new VueRouter({
