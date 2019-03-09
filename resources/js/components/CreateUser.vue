@@ -1,6 +1,13 @@
 <template>
   <div id="CreateUser" class="px-md-2">
     <h1>Make New User</h1>
+    <!-- alert message -->
+    <div class="alert alert-danger my-2 alert-dismissible fade show" role="alert" v-if="alertDangerMessage != ' '">
+      <strong>Upoad error:</strong> {{ alertDangerMessage }}
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
     <b-form @submit="onSubmit" @reset="onReset">
       <div role="group">
 
@@ -67,8 +74,9 @@
         </div>
 
         </div>
-          <button @click="addRow" class="my-3 btn btn-success">+ Add email</button>
+          <button @click="addRow" class="mb-3 btn btn-secondary">+ Add email</button>
         </div>
+
         <div class="text-right">
           <b-button
             type="submit"
@@ -89,7 +97,8 @@ export default {
       dateOfBirth: ' ',
       emails: [ ' ' ],
       respErrors: [],
-      sendedData: []
+      sendedData: [],
+      alertDangerMessage: ' '
     }
   },
   computed: {
@@ -108,8 +117,8 @@ export default {
     },
     nameState() {
       let state = null
-      if( this.name != ' ' )
-        state = (!this.respErrors['name'] || ( this.sendedData['name'] && this.sendedData['name'] == this.name)) && this.name.length > 2
+      if( this.name != ' ' ) //default state
+        state = (!this.respErrors['name'] || ( this.sendedData['name'] && this.sendedData['name'] != this.name)) && this.name.length > 2
       return state
     },
     dateState() {
@@ -120,6 +129,7 @@ export default {
     },
     nameInvalidFeedback() {
       let feedback = 'Invalid name format!'
+      //get response errors
       if(this.respErrors['name']) {
         feedback = '(name: ' + this.sendedData['name'] + ') error:'
         $.each(this.respErrors['name'], function(key,err){
@@ -152,6 +162,7 @@ export default {
      },
      onSubmit(evt) {
        evt.preventDefault()
+       //data state when send to server
        this.sendedData = {
              name: this.name,
              date_of_birth: this.dateOfBirth,
@@ -163,9 +174,13 @@ export default {
                console.log(response.data)
            })
            .catch(function (error) {
-             console.log(error.response.data)
-             if(error.response.data.errors)
-              this.respErrors = error.response.data.errors
+             console.log(error.response.data);
+              //store error
+              if(error.response.data.errors)
+                this.respErrors = error.response.data.errors
+              if(error.response.data.message)
+                this.alertDangerMessage = error.response.data.message
+
            }.bind(this));
        }
      },
