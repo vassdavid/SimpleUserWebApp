@@ -1,13 +1,23 @@
 <template>
   <div id="CreateUser" class="px-md-2">
     <h1>Make New User</h1>
-    <!-- alert message -->
+    <!-- alert messages -->
+    <!-- danger -->
     <div class="alert alert-danger my-2 alert-dismissible fade show" role="alert" v-if="alertDangerMessage != ' '">
       <strong>Upoad error:</strong> {{ alertDangerMessage }}
       <button type="button" class="close" data-dismiss="alert" aria-label="Close">
         <span aria-hidden="true">&times;</span>
       </button>
     </div>
+    <!-- success -->
+    <div class="alert alert-success my-2 alert-dismissible fade show" role="alert" v-if="alertSuccessMessage != ' '">
+      <strong>Create new user is successful:</strong> {{ alertSuccessMessage }}
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+
+
     <b-form @submit="onSubmit" @reset="onReset">
       <div role="group">
 
@@ -98,7 +108,8 @@ export default {
       emails: [ ' ' ],
       respErrors: [],
       sendedData: [],
-      alertDangerMessage: ' '
+      alertDangerMessage: ' ',
+      alertSuccessMessage: ' '
     }
   },
   computed: {
@@ -123,7 +134,7 @@ export default {
     },
     dateState() {
       if(this.dateOfBirth == ' ')
-         return null
+        return null
       let date = new Date(this.dateOfBirth)
       return date.getTime() < Date.now()
     },
@@ -155,31 +166,43 @@ export default {
       evt.preventDefault()
       this.emails.push(' ')
     },
+    reset() {
+      this.name = this.dateOfBirth = ' '
+      this.emails = [ ' ' ]
+    },
     onReset(evt) {
-       evt.preventDefault()
-       this.name = this.dateOfBirth = ''
-       this.emails = [ ' ' ]
+      evt.preventDefault()
+      this.reset()
      },
      onSubmit(evt) {
-       evt.preventDefault()
+      evt.preventDefault()
        //data state when send to server
-       this.sendedData = {
-             name: this.name,
-             date_of_birth: this.dateOfBirth,
-             emails: this.emails
-        }
-       if(this.formState){
-         axios.post('/api/user', this.sendedData)
-           .then(function (response) {
-               console.log(response.data)
-           })
-           .catch(function (error) {
-             console.log(error.response.data);
-              //store error
-              if(error.response.data.errors)
-                this.respErrors = error.response.data.errors
-              if(error.response.data.message)
-                this.alertDangerMessage = error.response.data.message
+      this.sendedData = {
+        name: this.name,
+        date_of_birth: this.dateOfBirth,
+        emails: this.emails
+      }
+      //set resp data to default
+      this.alertDangerMessage = this.respErrors =  this.alertSuccessMessage = ' '
+      //all form data is ready
+      if(this.formState){
+        axios.post('/api/user', this.sendedData)
+          .then(function (response) {
+            console.log(response.data)
+            let emails = []
+            $.each(response.data.emails, function(key, value){
+              emails.push(value.email)
+            })
+            this.alertSuccessMessage = 'new user: (name: ' + response.data.name + ', date of birth: ' + response.data.date_of_birth + ', emails: ' + emails.join() + ')'
+            this.reset()
+          }.bind(this))
+          .catch(function (error) {
+            console.log(error.response.data);
+            //store error
+            if(error.response.data.errors)
+              this.respErrors = error.response.data.errors
+            if(error.response.data.message)
+              this.alertDangerMessage = error.response.data.message
 
            }.bind(this));
        }
