@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class User extends Model
 {
   protected $table = 'users';
+  protected $visible = ['name', 'date_of_birth', 'emails'];
 
   /**
   * The attributes that are mass assignable.
