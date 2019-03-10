@@ -1,7 +1,10 @@
 <template>
   <div id="users" class="container px-2">
-    <h1>Users</h1>
-    <div class=" row">
+    <div class="row">
+      <h1>Users</h1>
+
+    </div>
+    <div class="bg-secondary row">
       <div class="col-sm-6 col-lg-4 col-xl-3 p-1" v-for="user in users">
 
         <div class="card user-card" >
