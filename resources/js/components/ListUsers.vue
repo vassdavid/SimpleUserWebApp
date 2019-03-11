@@ -4,7 +4,16 @@
       <h1>Users</h1>
 
     </div>
-    <div class="bg-secondary row">
+    <div class="row">
+      <div class="col-12" v-if="no-user">
+        <div class="display-4">
+            There are no registered users!
+        </div>
+        <div class="alert alert-info">
+          You can register new user in
+          <router-link to="/CreateUser">here</router-link>
+        </div>
+      </div>
       <div class="col-sm-6 col-lg-4 col-xl-3 p-1" v-for="user in users">
 
         <div class="card user-card" >
@@ -63,12 +72,12 @@
 export default {
   name: "",
   data: () => ({
-    users: [],
+    users: [ ' ' ],
     currentPage: 0,
     perPage: 0,
     page: 0,
     lastPage: 1,
-    apiUrl: '/api/user',
+    apiUrl: '/api/user'
   }),
   created() {
     this.loader()
