@@ -5,7 +5,7 @@
 
     </div>
     <div class="row">
-      <div class="col-12" v-if="no-user">
+      <div class="col-12" v-if="users.length == 0">
         <div class="display-4">
             There are no registered users!
         </div>
