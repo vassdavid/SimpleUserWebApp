@@ -33,7 +33,6 @@
         >
           <b-form-input id="inputName" :state="nameState" v-model="name" trim />
           </b-form-group>
-
         <!-- Date of Birth -->
         <b-form-group
           id="inputDoBGr"
@@ -50,6 +49,7 @@
             type="date"
             v-model="dateOfBirth"
             min="1900-01-01"
+            :max="today"
             trim
           />
         </b-form-group>
@@ -119,7 +119,24 @@ export default {
       alertSuccessMessage: ' '
     }
   },
+  watch: {
+    //watch email array
+    emails: function(oldEmails, newEmails) {
+      //set to lowercase
+      for( let i = 0; i < oldEmails.length; i++ ) {
+        newEmails[i] = newEmails[i].toLowerCase()
+      }
+    }
+  },
   computed: {
+    today() {
+      let day = new Date()
+      return (
+        day.getFullYear()+ '-' +
+        (day.getMonth() < 10 ?  '0' : '') + day.getMonth() + '-' +
+        (day.getDate() < 10 ?  '0' : '') + day.getDate()
+      )
+    },
     formState() {
       let state = true, i = -1
       while(this.emails[++i]) {
@@ -168,10 +185,12 @@ export default {
       return state
     },
     dateState() {
+      let dateFormat = /^\d{4}-\d{2}-\d{2}$/, state = false
       if(this.dateOfBirth == ' ')
-        return null
-      let date = new Date(this.dateOfBirth)
-      return date.getTime() < Date.now()
+        state = null
+      else if( dateFormat.test(this.dateOfBirth))
+        state = true
+      return state
     },
     nameInvalidFeedback() {
       let feedback = 'Invalid name format!'
