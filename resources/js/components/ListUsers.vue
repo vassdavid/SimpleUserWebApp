@@ -36,7 +36,7 @@
 
             <div class="row">
               <div class="col pl-1">
-                Email{{ user.emails.length > 1 ? 's' : '' }}:
+                Email{{ user.emails && user.emails.length > 1  ? 's' : '' }}:
               </div>
             </div>
             <div class="row">
