@@ -15,13 +15,13 @@ class User extends Model
   * @var array
   */
   protected $fillable = [
-    'name', 'date_of_birth'
+    'name', 'date_of_birth', 'id'
   ];
   /**
   *  Get user email adresses
   */
   public function emails()
   {
-      return $this->hasMany('App\Email');
+      return $this->hasMany('App\Email')->orderBy('email');
   }
 }
