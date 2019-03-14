@@ -19,16 +19,6 @@ class UserController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -38,72 +28,39 @@ class UserController extends Controller
     {
       $data = $request->validate([
         'name'  => 'required|min:3|max:35|unique:users',
-        'date_of_birth' =>  'date_format:"Y-m-d"|required',
+        'date_of_birth' =>  'date_format:"Y-m-d"|before_or_equal:today|required',
         "emails"  =>  "required|array|min:1",
         "emails.*"  =>  "required|string|email|distinct",
       ]);
+
       //user model
       $user = new User([
         'name' => $data['name'],
         'date_of_birth' => $data['date_of_birth']
       ]);
 
-      if( $user->save() )
+      //save user
+      $user->save();
+
+      if(count($data['emails']) > 1) {
+        $emails = [ ];
         foreach( $data['emails'] as $email ) {
-          //email model
-          $emailEntity = new Email([
-            'user_id' => $user->id,
+          //get emails
+          $emails[] = new Email([
             'email' => $email,
           ]);
-          $emailEntity->save();
         }
+        $user->emails()->saveMany($emails);
+      }
+      else {
+        $user->emails()->save(
+          new Email([
+            'email' => $data['emails'][0],
+          ])
+        );
+      }
       //created user with emails
-      $user->emails;
-      return $user;
+      return $user->load('emails');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\User  $user
-     * @return \Illuminate\Http\Response
-     */
-    public function show(User $user)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\User  $user
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(User $user)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\User  $user
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, User $user)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\User  $user
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(User $user)
-    {
-        //
-    }
 }
