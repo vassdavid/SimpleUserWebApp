@@ -27,24 +27,19 @@ class UserTest extends TestCase
         $makedUser = $this->makeUser();
         $makedEmails = $this->makeEmails();
 
-        $response = $this->json(
-          'POST',
-          '/api/user',
-          $this->createFormData( $makedUser, $makedEmails )
-        );
+        $response = $this->sendUserToJson($makedUser, $makedEmails);
 
         $response
         ->assertStatus(201)
         //give a created user
         ->assertJson(
           $makedUser->toArray()
-        )
-        ;
+        );
 
         //User model
         $userM = \App\User::where('name', $makedUser->name)
         ->first();
-        
+
         //Email model
         $emailsM = \App\Email::where('user_id', $userM->id)->orderBy('email');
 
@@ -64,7 +59,98 @@ class UserTest extends TestCase
         }
 
     }
+    private function sendUserToJson($user, $emails) {
+      return $this->json(
+        'POST',
+        '/api/user',
+        $this->createFormData( $user, $emails )
+      );
+    }
 
+    /**
+     * test dupicated email
+     * @return void
+     */
+    public function testDupicatedEmail() {
+      //create neccesary models with factory
+      $makedUser = $this->makeUser();
+      $makedEmails = $this->makeEmails();
+
+      //copy add first email one more time
+      $makedEmails->push($makedEmails[0]);
+
+      $response = $this->sendUserToJson($makedUser, $makedEmails);
+
+      $response
+      ->assertStatus(422);
+
+    }
+
+    public function testInvaildFormats() {
+      //create neccesary models with factory
+      $makedUser = $this->makeUser();
+      $makedEmails = $this->makeEmails();
+
+      //make invalid name min
+      $makedUser->name = 'gh';
+
+      $response = $this->sendUserToJson($makedUser, $makedEmails);
+
+      $response
+      ->assertStatus(422);
+
+      //invalid name max
+      $makedUser->name = str_random(36);
+
+      $response = $this->sendUserToJson($makedUser, $makedEmails);
+
+      $response
+      ->assertStatus(422);
+
+      //reset user
+      $makedUser = $this->makeUser();
+
+      //invalid date format
+      $makedUser->date_of_birth = "jkL45";
+
+      $response = $this->json(
+        'POST',
+        '/api/user',
+        $this->createFormData( $makedUser, $makedEmails )
+      );
+
+      $response
+      ->assertStatus(422);
+
+      //invalid datetime
+      $datetime = new \DateTime('tomorrow');
+      $makedUser->date_of_birth = $datetime->format('Y-m-d');
+
+      $response = $this->sendUserToJson($makedUser, $makedEmails);
+
+      $response
+      ->assertStatus(422);
+
+      //reset user
+      $makedUser = $this->makeUser();
+
+      //invalid emailformat
+      $makedEmails[0]->email = "jhdjk";
+
+      $response = $this->json(
+        'POST',
+        '/api/user',
+        $this->createFormData( $makedUser, $makedEmails )
+      );
+
+      $response
+      ->assertStatus(422);
+    }
+
+    /**
+     * test user api get
+     * @return void
+     */
     public function testGetUserAPI()
     {
       $response = $this->get('/api/user');
@@ -89,14 +175,8 @@ class UserTest extends TestCase
       $number = rand(1,5);
       $emails = [];
 
-      if($number == 1)
-      {
-        $emails = [factory(\App\Email::class)->make()];
-      }
-      else
-      {
-        $emails = factory(\App\Email::class,$number)->make();
-      }
+      $emails = factory(\App\Email::class,$number)->make();
+
       return $emails;
     }
 
