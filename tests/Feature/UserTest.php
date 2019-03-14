@@ -46,11 +46,16 @@ class UserTest extends TestCase
         //check user is created
         $this->assertEquals($userM->toArray(), $makedUser->toArray());
 
+        //get array format
+        $emailsBeforeSend = $this->makeSimpleEmailArray($makedEmails);
+        $emailsAfterSend = $this->makeSimpleEmailArray($emailsM->get());
+
+        //sorting (make equal array if array contain similar elements)
+        sort($emailsBeforeSend);
+        sort($emailsAfterSend);
+        
         //check email(s) is created
-        $this->assertEquals(
-          $userM->emails->sortBy('email')->toArray(),
-          $emailsM->get()->toArray()
-        );
+        $this->assertEquals($emailsBeforeSend, $emailsAfterSend);
 
         //remove created item by name
         if( self::DELETING ) {
@@ -59,7 +64,13 @@ class UserTest extends TestCase
         }
 
     }
-    private function sendUserToJson($user, $emails) {
+    /**
+     * Send user to store
+     * @param  \App\User $user
+     * @param  Illuminate\Database\Eloquent\Collection $emails
+     * @return void
+     */
+    private function sendUserToJson(\App\User $user, $emails) {
       return $this->json(
         'POST',
         '/api/user',
@@ -113,11 +124,8 @@ class UserTest extends TestCase
       //invalid date format
       $makedUser->date_of_birth = "jkL45";
 
-      $response = $this->json(
-        'POST',
-        '/api/user',
-        $this->createFormData( $makedUser, $makedEmails )
-      );
+      //send json data
+      $response = $this->sendUserToJson($makedUser, $makedEmails);
 
       $response
       ->assertStatus(422);
@@ -137,11 +145,7 @@ class UserTest extends TestCase
       //invalid emailformat
       $makedEmails[0]->email = "jhdjk";
 
-      $response = $this->json(
-        'POST',
-        '/api/user',
-        $this->createFormData( $makedUser, $makedEmails )
-      );
+      $response = $this->sendUserToJson($makedUser, $makedEmails);
 
       $response
       ->assertStatus(422);
@@ -173,8 +177,6 @@ class UserTest extends TestCase
     private function makeEmails()
     {
       $number = rand(1,5);
-      $emails = [];
-
       $emails = factory(\App\Email::class,$number)->make();
 
       return $emails;
@@ -188,15 +190,20 @@ class UserTest extends TestCase
     *
     */
     private function createFormData(\App\User $user, $emails) {
-      $formEmails = [];
-      foreach ($emails as $email) {
-        $formEmails[] = "{$email['email']}";
-      }
+      $formEmails = $this->makeSimpleEmailArray($emails);
       return [
         'name' => "{$user->name}",
         'date_of_birth' => "{$user->date_of_birth}",
         'emails' =>  $formEmails
       ];
+    }
+
+    private function makeSimpleEmailArray($emails) {
+      $simpleEmailArray = array();
+      foreach ($emails as $email) {
+        $simpleEmailArray[] = "{$email['email']}";
+      }
+      return $simpleEmailArray;
     }
 
 }
