@@ -14,7 +14,3 @@
 Route::get('/', function () {
     return view('welcome');
 });
-//user resource controller
-Route::resource('user', 'UserController')->only([
-    'index', 'store'
-]);
