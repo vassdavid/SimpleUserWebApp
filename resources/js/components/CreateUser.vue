@@ -282,12 +282,18 @@ export default {
             this.reset()
           }.bind(this))
           .catch(function (error) {
-            //store messages
-            if(error.response.data.errors)
-              this.respErrors = error.response.data.errors
-            if(error.response.data.message)
-              this.alertDangerMessage = error.response.data.message
+            //net::ERR_CONNECTION_REFUSED
+            if(!error.response) {
+              this.alertDangerMessage = "Failed to send data to server! Can't access the server."
+            }
+            else {
+              //store messages
+              if(error.response.data.errors)
+                this.respErrors = error.response.data.errors
+              if(error.response.data.message)
+                this.alertDangerMessage = error.response.data.message
 
+            }
            }.bind(this));
        }
      },
