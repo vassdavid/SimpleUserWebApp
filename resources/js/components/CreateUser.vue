@@ -246,7 +246,7 @@ export default {
       this.emails.push(' ')
     },
     reset() {
-      this.name = this.dateOfBirth = ' '
+      this.name = this.dateOfBirth = ''
       this.emails = [ ' ' ]
     },
     onReset(evt) {
