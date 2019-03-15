@@ -30,6 +30,7 @@
           :invalid-feedback="nameInvalidFeedback"
           valid-feedback="Thank you!"
           :state="nameState"
+          max="35"
         >
           <b-form-input id="inputName" :state="nameState" v-model="name" trim />
           </b-form-group>
@@ -50,6 +51,7 @@
             v-model="dateOfBirth"
             min="1900-01-01"
             :max="today"
+            aria-invalid="true"
             trim
           />
         </b-form-group>
@@ -110,8 +112,8 @@
 export default {
   data() {
     return {
-      name: ' ',
-      dateOfBirth: ' ',
+      name: '',
+      dateOfBirth: '',
       emails: [ ' ' ],
       respErrors: [],
       sendedData: [],
@@ -119,21 +121,12 @@ export default {
       alertSuccessMessage: ' '
     }
   },
-  watch: {
-    //watch email array
-    emails: function(oldEmails, newEmails) {
-      //set to lowercase
-      for( let i = 0; i < oldEmails.length; i++ ) {
-        newEmails[i] = newEmails[i].toLowerCase()
-      }
-    }
-  },
   computed: {
     today() {
       let day = new Date()
       return (
         day.getFullYear()+ '-' +
-        (day.getMonth() < 10 ?  '0' : '') + day.getMonth() + '-' +
+        ((day.getMonth()+1) < 10 ?  '0' : '') + (day.getMonth()+1) + '-' +
         (day.getDate() < 10 ?  '0' : '') + day.getDate()
       )
     },
@@ -168,7 +161,7 @@ export default {
     },
     nameState() {
       let state = null
-      if( this.name != ' ' ) //default state
+      if( this.name != '' ) //default state
         state = (
           (
             !this.respErrors['name']
@@ -186,10 +179,12 @@ export default {
     },
     dateState() {
       let dateFormat = /^\d{4}-\d{2}-\d{2}$/, state = false
-      if(this.dateOfBirth == ' ')
+      if(this.dateOfBirth == '')
         state = null
-      else if( dateFormat.test(this.dateOfBirth))
-        state = true
+      else if( dateFormat.test(this.dateOfBirth) ) {
+        let date = new Date(this.dateOfBirth)
+        state = date.getTime() < Date.now()
+      }
       return state
     },
     nameInvalidFeedback() {

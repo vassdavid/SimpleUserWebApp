@@ -5,7 +5,7 @@
 
     </div>
     <div class="row">
-      <div class="col-12" v-if="users.length == 0">
+      <div class="col-12" v-if="users && users.length == 0 && usersLoaded ">
         <div class="display-4">
             There are no registered users!
         </div>
@@ -14,7 +14,7 @@
           <router-link to="/CreateUser">here</router-link>
         </div>
       </div>
-      <div class="col-sm-6 col-lg-4 col-xl-3 p-1" v-for="user in users">
+      <div class="col-sm-6 col-lg-4 col-xl-3 p-1" v-else v-for="user in users">
 
         <div class="card user-card" >
 
@@ -72,12 +72,13 @@
 export default {
   name: "",
   data: () => ({
-    users: [ ' ' ],
+    users: [  ],
     currentPage: 0,
     perPage: 0,
     page: 0,
-    lastPage: 1,
-    apiUrl: '/api/user'
+    lastPage: 0,
+    apiUrl: '/api/user',
+    usersLoaded: false
   }),
   created() {
     this.loader()
@@ -97,18 +98,27 @@ export default {
         cat = this.category + '/'
       return '/#/users-page/' + pageNum
     },
+    loadUsers(state){
+      this.usersLoaded = state
+    },
     loader(page=0){
-       let pager = ''
-       //get page
-       if(!page){
-         if(this.$route.params.page)
+      let pager = ''
+      //get page
+      if(!page){
+        if(this.$route.params.page)
           page = this.$route.params.page
-       }
-      // 404 =>  this.lastPage >= parseInt(page) > 0
-       if(parseInt(page) > 0 ) {
+      }
+      //set to default
+      this.usersLoaded = false
+      // 404 =>  !(this.lastPage > parseInt(page) > 0)
+      if(
+        parseInt(this.lastPage) < parseInt(page) ||
+        parseInt(page) < 0
+      ) {
+        this.$router.push({path: '/404'})
+      }
+      else {
           pager += '?page=' + page
-       } else {
-         //bad format
        }
 
       //http request
@@ -119,9 +129,12 @@ export default {
         this.lastPage = response.data.last_page
         this.path = response.data.path
         this.currentPage = response.data.current_page
+        this.usersLoaded = true
       })
+      .then()
      .catch(e => {
-       console.log(e)
+      console.log(e)
+      this.$router.push({path: '/404'})
      })
     },
   }

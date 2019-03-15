@@ -7,6 +7,9 @@
       <div class="display-4 subtitle">
         Page not found
       </div>
+      <div class="text-center">
+        <button type="button" @click="goBack" class="btn btn-primary mt-3" name="button">Go back</button>
+      </div>
     </div>
     </div>
 </template>
@@ -15,7 +18,12 @@ export default {
   name: "",
   data: () => ({
 
-  })
+  }),
+  methods: {
+    goBack() {
+      this.$router.go(-1)
+    }
+  }
 }
 </script>
 <style lang="scss" scoped>
