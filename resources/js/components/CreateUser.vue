@@ -174,6 +174,8 @@ export default {
           )
           &&
           this.name.length > 2
+          &&
+          this.name.length <= 35
         )
       return state
     },
