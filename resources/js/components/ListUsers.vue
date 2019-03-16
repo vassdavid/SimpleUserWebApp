@@ -131,7 +131,6 @@ export default {
         this.currentPage = response.data.current_page
         this.usersLoaded = true
       })
-      .then()
      .catch(e => {
       console.log(e)
       this.$router.push({path: '/404'})
