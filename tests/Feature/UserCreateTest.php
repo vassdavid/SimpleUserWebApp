@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Feature;
 
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -14,7 +14,7 @@ class UserTest extends TestCase
     /*
     * Deleting created users
     */
-    const DELETING = true;
+    const DELETING = false;
 
     /**
      * valid upload test for user
@@ -53,7 +53,7 @@ class UserTest extends TestCase
         //sorting (make equal array if array contain similar elements)
         sort($emailsBeforeSend);
         sort($emailsAfterSend);
-        
+
         //check email(s) is created
         $this->assertEquals($emailsBeforeSend, $emailsAfterSend);
 
@@ -92,12 +92,11 @@ class UserTest extends TestCase
 
       $response = $this->sendUserToJson($makedUser, $makedEmails);
 
-      $response
-      ->assertStatus(422);
+      $response->assertStatus(422);
 
     }
 
-    public function testInvaildFormats() {
+    public function testInvaildNameFormats() {
       //create neccesary models with factory
       $makedUser = $this->makeUser();
       $makedEmails = $this->makeEmails();
@@ -107,19 +106,46 @@ class UserTest extends TestCase
 
       $response = $this->sendUserToJson($makedUser, $makedEmails);
 
-      $response
-      ->assertStatus(422);
+      $response->assertStatus(422);
 
       //invalid name max
       $makedUser->name = str_random(36);
 
       $response = $this->sendUserToJson($makedUser, $makedEmails);
 
-      $response
-      ->assertStatus(422);
+      $response->assertStatus(422);
+    }
+    /**
+     * test duplicated name
+     * @return void
+     */
+    public function testInvaildNameIsExist() {
+      //create neccesary models with factory
+      //If db is empty!! double creating name
+      $makedUser1 = $this->makeUser();
+      $makedEmails = $this->makeEmails();
+      //user2
+      $makedUser2 = $this->makeUser();
 
-      //reset user
+      //set user 1 name to user2
+      $makedUser2->name = $makedUser1->name;
+
+      $response = $this->sendUserToJson($makedUser1, $makedEmails);
+
+      //valid upload for user 1
+      $response->assertStatus(201);
+
+      //invalid name max
+      $response = $this->sendUserToJson($makedUser2, $makedEmails);
+
+      $response->assertStatus(422);
+    }
+
+
+    public function testInvaildDateFormats() {
+      //create neccesary models with factory
       $makedUser = $this->makeUser();
+      $makedEmails = $this->makeEmails();
 
       //invalid date format
       $makedUser->date_of_birth = "jkL45";
@@ -127,8 +153,7 @@ class UserTest extends TestCase
       //send json data
       $response = $this->sendUserToJson($makedUser, $makedEmails);
 
-      $response
-      ->assertStatus(422);
+      $response->assertStatus(422);
 
       //invalid datetime
       $datetime = new \DateTime('tomorrow');
@@ -136,30 +161,23 @@ class UserTest extends TestCase
 
       $response = $this->sendUserToJson($makedUser, $makedEmails);
 
-      $response
-      ->assertStatus(422);
+      $response->assertStatus(422);
+    }
 
-      //reset user
+
+    public function testInvaildEmailFormats() {
+      //create neccesary models with factory
       $makedUser = $this->makeUser();
+      $makedEmails = $this->makeEmails();
 
       //invalid emailformat
       $makedEmails[0]->email = "jhdjk";
 
       $response = $this->sendUserToJson($makedUser, $makedEmails);
 
-      $response
-      ->assertStatus(422);
+      $response->assertStatus(422);
     }
 
-    /**
-     * test user api get
-     * @return void
-     */
-    public function testGetUserAPI()
-    {
-      $response = $this->get('/api/user');
-      $response->assertStatus(200);
-    }
 
     /**
     * Make User with factory
