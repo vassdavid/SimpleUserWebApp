@@ -13,27 +13,52 @@ class UserModelTest extends TestCase
 {
     use WithFaker;
     use ArrayHelper;
-    /**
-     * A basic unit test example.
-     *
-     * @return void
-     */
-    public function testExample()
-    {
-        $this->assertTrue(true);
-    }
 
     //test create
     public function testCreateUser() {
-      $data = [
-          'name' => $this->faker->unique()->name,
-          'date_of_birth' => $this->faker->date( 'Y-m-d', now() ),
-          'emails' => []
-      ];
-      $number = rand(1,5);
-      for( $i=0; $i<$number; $i++ )
-        $data['emails'][] = $this->faker->unique()->safeEmail;
 
+      //make data
+      $data = $this->makeUserData();
+
+      //create user
+      $user = $this->createUser($data);
+
+      //check user
+      $this->checkUser($user, $data);
+
+    }
+
+    //test read
+    public function testReadUser() {
+      //make data
+      $data = $this->makeUserData();
+
+      //create user
+      $user = $this->createUser($data);
+
+      //find user
+      $found = User::find($user->id);
+
+      //check user
+      $this->checkUser($found->load('emails'), $data);
+    }
+
+    private function checkUser( $user, $data ) {
+
+      $this->assertInstanceOf(User::class, $user);
+      $this->assertEquals($data['name'], $user->name);
+      $this->assertEquals($data['date_of_birth'], $user->date_of_birth);
+
+      //make array
+      $emails = $this->makeSimpleArrayByKey($user->emails, 'email');
+
+      //check two array has same items
+      $this->assertTrue(
+        $this->arraysHasSameItems($emails, $data['emails'])
+      );
+    }
+
+    private function createUser( $data ) {
 
       //user model
       $user = new User([
@@ -62,19 +87,20 @@ class UserModelTest extends TestCase
           ])
         );
       }
+      return $user;
+    }
 
-      $this->assertInstanceOf(User::class, $user);
-      $this->assertEquals($data['name'], $user->name);
-      $this->assertEquals($data['date_of_birth'], $user->date_of_birth);
+    private function makeUserData() {
+      $data = [
+          'name' => $this->faker->unique()->name,
+          'date_of_birth' => $this->faker->date( 'Y-m-d', now() ),
+          'emails' => []
+      ];
+      $number = rand(1,5);
+      for( $i=0; $i<$number; $i++ )
+        $data['emails'][] = $this->faker->unique()->safeEmail;
 
-      //make array
-      $emails = $this->makeSimpleArrayByKey($user->emails, 'email');
-
-      //check two array has same items
-      $this->assertTrue(
-        $this->arraysHasSameItems($emails, $data['emails'])
-      );
-
+      return $data;
     }
 
 }
