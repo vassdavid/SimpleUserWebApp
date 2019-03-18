@@ -16,9 +16,9 @@ class UserTest extends TestCase
     use ArrayHelper;
     //settings:
     /*
-    * Deleting created users
+    * Deleting created users (if test passed)
     */
-    const DELETING = false;
+    const DELETING = true;
 
     /**
      * valid upload test for user
@@ -39,7 +39,6 @@ class UserTest extends TestCase
         ->assertJson(
           $makedUser->toArray()
         );
-
         //User model
         $userM = User::where('name', $makedUser->name)
         ->first();
@@ -97,6 +96,40 @@ class UserTest extends TestCase
 
     }
 
+    public function testMissingEmails() {
+      $makedUser = $this->makeUser();
+
+      $response = $this->sendUserToJson($makedUser, array());
+
+      $response->assertStatus(422);
+    }
+
+    public function testEmptyName() {
+      //create neccesary models with factory
+      $makedUser = $this->makeUser();
+      $makedEmails = $this->makeEmails();
+
+      //invalid emailformat
+      $makedUser->name = null;
+
+      $response = $this->sendUserToJson($makedUser, $makedEmails);
+
+      $response->assertStatus(422);
+    }
+
+    public function testEmptyDateOfBirth() {
+      //create neccesary models with factory
+      $makedUser = $this->makeUser();
+      $makedEmails = $this->makeEmails();
+
+      //invalid emailformat
+      $makedUser->date_of_birth = null;
+
+      $response = $this->sendUserToJson($makedUser, $makedEmails);
+
+      $response->assertStatus(422);
+    }
+
     public function testInvaildNameFormats() {
       //create neccesary models with factory
       $makedUser = $this->makeUser();
@@ -105,16 +138,16 @@ class UserTest extends TestCase
       //make invalid name min
       $makedUser->name = 'gh';
 
-      $response = $this->sendUserToJson($makedUser, $makedEmails);
+      $response1 = $this->sendUserToJson($makedUser, $makedEmails);
 
-      $response->assertStatus(422);
+      $response1->assertStatus(422);
 
       //invalid name max
       $makedUser->name = str_random(36);
 
-      $response = $this->sendUserToJson($makedUser, $makedEmails);
+      $response2 = $this->sendUserToJson($makedUser, $makedEmails);
 
-      $response->assertStatus(422);
+      $response2->assertStatus(422);
     }
     /**
      * test duplicated name
@@ -131,17 +164,27 @@ class UserTest extends TestCase
       //set user 1 name to user2
       $makedUser2->name = $makedUser1->name;
 
-      $response = $this->sendUserToJson($makedUser1, $makedEmails);
+      $response1 = $this->sendUserToJson($makedUser1, $makedEmails);
 
       //valid upload for user 1
-      $response->assertStatus(201);
+      $response1->assertStatus(201);
 
       //invalid name max
-      $response = $this->sendUserToJson($makedUser2, $makedEmails);
+      $response2 = $this->sendUserToJson($makedUser2, $makedEmails);
 
-      $response->assertStatus(422);
+      $response2->assertStatus(422);
+
+      //remove created item by name
+      if( self::DELETING ) {
+        //User model
+        $userM = User::where('name', $makedUser1->name)
+        ->first();
+        //Email model
+        $emailsM = Email::where('user_id', $userM->id)->orderBy('email');
+        $emailsM->delete();
+        $userM->delete();
+      }
     }
-
 
     public function testInvaildDateFormats() {
       //create neccesary models with factory
@@ -186,7 +229,9 @@ class UserTest extends TestCase
     */
     private function makeUser()
     {
-      return factory(User::class)->make();
+      $user = factory(User::class)->make();
+      var_dump($user->name);
+      return $user;
     }
 
     /**
@@ -195,9 +240,8 @@ class UserTest extends TestCase
      */
     private function makeEmails()
     {
-      $number = rand(1,5);
+      $number = rand(2,5);
       $emails = factory(Email::class,$number)->make();
-
       return $emails;
     }
 
