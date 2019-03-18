@@ -36,6 +36,7 @@ class UserModelTest extends TestCase
       //create user
       $user = $this->createUser($data);
 
+
       //find user
       $found = User::find($user->id);
 
@@ -90,6 +91,47 @@ class UserModelTest extends TestCase
       return $user;
     }
 
+    public function testNameIsAlredyExist( ) {
+      //make user data 1
+      $data1 = $this->makeUserData();
+
+      //make user data 2
+      $data2 = $this->makeUserData();
+
+      //set same name as user 1
+      $data2['name'] = $data1['name'];
+
+      //create user 1
+      $this->createUser($data1);
+
+      //create user 2 & check is not created
+      $this->falseUserCheck($data2);
+
+    }
+
+    public function testNameIsNull( ) {
+      //make user data 1
+      $data = $this->makeUserData();
+
+      //set name to null
+      $data['name'] = null;
+
+      $this->falseUserCheck($data);
+
+    }
+
+    public function testDateOfBirthIsNull( ) {
+      //make user data 1
+      $data = $this->makeUserData();
+
+      //set birtdate to null
+      $data['date_of_birth'] = null;
+
+      $this->falseUserCheck($data);
+
+    }
+
+
     private function makeUserData() {
       $data = [
           'name' => $this->faker->unique()->name,
@@ -101,6 +143,21 @@ class UserModelTest extends TestCase
         $data['emails'][] = $this->faker->unique()->safeEmail;
 
       return $data;
+    }
+
+    private function falseUserCheck($data) {
+
+      $created = true;
+
+      try {
+        $this->createUser($data);
+      }
+      catch ( \Exception $e ) {
+        $created = false;
+      }
+
+      $this->assertFalse($created);
+
     }
 
 }
