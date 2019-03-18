@@ -2,7 +2,10 @@
 
 namespace Tests\Feature;
 
+use App\User;
+use App\Email;
 use Tests\TestCase;
+use Tests\Traits\ArrayHelper;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -10,6 +13,7 @@ use Illuminate\Foundation\Testing\WithoutMiddleware;
 
 class UserTest extends TestCase
 {
+    use ArrayHelper;
     //settings:
     /*
     * Deleting created users
@@ -37,11 +41,11 @@ class UserTest extends TestCase
         );
 
         //User model
-        $userM = \App\User::where('name', $makedUser->name)
+        $userM = User::where('name', $makedUser->name)
         ->first();
 
         //Email model
-        $emailsM = \App\Email::where('user_id', $userM->id)->orderBy('email');
+        $emailsM = Email::where('user_id', $userM->id)->orderBy('email');
 
         //check user is created
         $this->assertEquals($userM->toArray(), $makedUser->toArray());
@@ -50,12 +54,9 @@ class UserTest extends TestCase
         $emailsBeforeSend = $this->makeSimpleEmailArray($makedEmails);
         $emailsAfterSend = $this->makeSimpleEmailArray($emailsM->get());
 
-        //sorting (make equal array if array contain similar elements)
-        sort($emailsBeforeSend);
-        sort($emailsAfterSend);
-
-        //check email(s) is created
-        $this->assertEquals($emailsBeforeSend, $emailsAfterSend);
+        $this->assertTrue(
+          $this->arraysHasSameItems($emailsBeforeSend, $emailsAfterSend)
+        );
 
         //remove created item by name
         if( self::DELETING ) {
@@ -185,7 +186,7 @@ class UserTest extends TestCase
     */
     private function makeUser()
     {
-      return factory(\App\User::class)->make();
+      return factory(User::class)->make();
     }
 
     /**
@@ -195,7 +196,7 @@ class UserTest extends TestCase
     private function makeEmails()
     {
       $number = rand(1,5);
-      $emails = factory(\App\Email::class,$number)->make();
+      $emails = factory(Email::class,$number)->make();
 
       return $emails;
     }
@@ -217,11 +218,7 @@ class UserTest extends TestCase
     }
 
     private function makeSimpleEmailArray($emails) {
-      $simpleEmailArray = array();
-      foreach ($emails as $email) {
-        $simpleEmailArray[] = "{$email['email']}";
-      }
-      return $simpleEmailArray;
+      return $this->makeSimpleArrayByKey($emails, 'email');
     }
 
 }
