@@ -5,6 +5,7 @@
 
     </div>
     <div class="row">
+      <!-- empty  -->
       <div class="col-12" v-if="users && users.length == 0 && usersLoaded ">
         <div class="display-4">
             There are no registered users!
@@ -14,6 +15,11 @@
           <router-link to="/CreateUser">here</router-link>
         </div>
       </div>
+      <!-- Loading -->
+      <div class="loader" v-else-if="!usersLoaded">
+        Loading...
+      </div>
+      <!-- list  -->
       <div class="col-sm-6 col-lg-4 col-xl-3 p-1" v-else v-for="user in users">
 
         <div class="card user-card" >
@@ -53,7 +59,7 @@
 
     </div>
     <div class="row">
-      <div class="col pt-2">
+      <div class="col pt-2" v-bind:class="{ 'd-none': !usersLoaded }">
         <b-pagination-nav
           v-if="lastPage > 1"
           @input="getPage(currentPage)"
@@ -90,7 +96,7 @@ export default {
   },
   methods: {
     getPage(page){
-      this.loader(page);
+      //this.loader(page);
     },
     linkGen (pageNum) {
       let cat = ''
@@ -133,12 +139,72 @@ export default {
       })
      .catch(e => {
       console.log(e)
-      this.$router.push({path: '/404'})
+      if(error.response.status == 404)
+        this.$router.push({path: '/404'})
      })
     },
   }
 }
 </script>
 <style lang="scss" scoped>
-
+.loader,
+.loader:before,
+.loader:after {
+  background: #3490dc;
+  -webkit-animation: load1 1s infinite ease-in-out;
+  animation: load1 1s infinite ease-in-out;
+  width: 1em;
+  height: 4em;
+}
+.loader {
+  color: #3490dc;
+  text-indent: -9999em;
+  margin: 88px auto;
+  position: relative;
+  font-size: 11px;
+  -webkit-transform: translateZ(0);
+  -ms-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-animation-delay: -0.16s;
+  animation-delay: -0.16s;
+  margin-top: 30vh;
+}
+.loader:before,
+.loader:after {
+  position: absolute;
+  top: 0;
+  content: '';
+}
+.loader:before {
+  left: -1.5em;
+  -webkit-animation-delay: -0.32s;
+  animation-delay: -0.32s;
+}
+.loader:after {
+  left: 1.5em;
+}
+@-webkit-keyframes load1 {
+  0%,
+  80%,
+  100% {
+    box-shadow: 0 0;
+    height: 4em;
+  }
+  40% {
+    box-shadow: 0 -2em;
+    height: 5em;
+  }
+}
+@keyframes load1 {
+  0%,
+  80%,
+  100% {
+    box-shadow: 0 0;
+    height: 4em;
+  }
+  40% {
+    box-shadow: 0 -2em;
+    height: 5em;
+  }
+}
 </style>
