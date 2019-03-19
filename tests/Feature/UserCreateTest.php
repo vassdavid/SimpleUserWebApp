@@ -241,9 +241,7 @@ class UserTest extends TestCase
     */
     private function makeUser()
     {
-      $user = factory(User::class)->make();
-      var_dump($user->name);
-      return $user;
+      return factory(User::class)->make();
     }
 
     /**
