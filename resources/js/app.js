@@ -34,7 +34,8 @@ Vue.component( 'CreateUser', CreateUser )
 const routes = [
   {
     path: '/',
-    component: ListUsers
+    component: ListUsers,
+    name: 'home'
   },
   {
     path: '/users',
