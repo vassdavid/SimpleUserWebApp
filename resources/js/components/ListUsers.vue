@@ -96,7 +96,7 @@ export default {
   },
   methods: {
     getPage(page){
-
+      //if select page in pagination
     },
     linkGen (pageNum) {
       let cat = ''
