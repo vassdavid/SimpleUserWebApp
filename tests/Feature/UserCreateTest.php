@@ -195,17 +195,17 @@ class UserTest extends TestCase
       $makedUser->date_of_birth = "jkL45";
 
       //send json data
-      $response = $this->sendUserToJson($makedUser, $makedEmails);
+      $response1 = $this->sendUserToJson($makedUser, $makedEmails);
 
-      $response->assertStatus(422);
+      $response1->assertStatus(422);
 
       //invalid datetime
       $datetime = new \DateTime('tomorrow');
       $makedUser->date_of_birth = $datetime->format('Y-m-d');
 
-      $response = $this->sendUserToJson($makedUser, $makedEmails);
+      $response2 = $this->sendUserToJson($makedUser, $makedEmails);
 
-      $response->assertStatus(422);
+      $response2->assertStatus(422);
     }
 
 
