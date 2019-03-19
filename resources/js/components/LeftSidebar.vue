@@ -22,14 +22,6 @@
 
   </nav>
 </template>
-<script>
-export default {
-  name: "",
-  data: () => ({
-
-  })
-}
-</script>
 <style lang="scss" scoped>
 .nav-link{
   color: #ddd;
