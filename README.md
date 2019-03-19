@@ -20,6 +20,21 @@ url: [project domain]/#/CreateUser
 -   Ctype PHP Extension
 -   JSON PHP Extension
 -   BCMath PHP Extension
+## Frontend Requirements
+### Browsers Support
+#### Vue.js
+-  Vue 2.x does not support IE8 and below!
+#### Bootstrap
+-  Chrome >= 45
+-  Firefox >= 38
+-  Edge >= 12
+-  Explorer >= 10
+-  iOS >= 9
+-  Safari >= 9
+-  Android >= 4.4
+-  Opera >= 30
+
+[More info](https://github.com/browserslist/browserslist#readme)
 ## Installation guide
  1. Get github repository:  `git clone https://github.com/vassdavid/SimpleUserWebApp.git`
  2. Copy .env.example to .env in project folder.
