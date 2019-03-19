@@ -55,6 +55,6 @@ The unit test contain the test of User model.
 The project also have factories and database seeder.
 #### Run tests
 ##### Database seeder
- If you fill generated users the database rund the`php artisan db:seed`command.
- ##### Unit and feature test
+ If you fill generated users the database run the `composer dump-autoload` and `php artisan db:seed`command. [laravel seeding](https://laravel.com/docs/5.8/seeding)
+##### Unit and feature test
 Run  `phpunit` command if you install phpunit in globally, else run  `vendor/bin/phpunit` in project folder.
