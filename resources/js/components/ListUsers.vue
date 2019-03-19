@@ -96,7 +96,7 @@ export default {
   },
   methods: {
     getPage(page){
-      //this.loader(page);
+
     },
     linkGen (pageNum) {
       let cat = ''
@@ -147,15 +147,6 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.loader,
-.loader:before,
-.loader:after {
-  background: #3490dc;
-  -webkit-animation: load1 1s infinite ease-in-out;
-  animation: load1 1s infinite ease-in-out;
-  width: 1em;
-  height: 4em;
-}
 .loader {
   color: #3490dc;
   text-indent: -9999em;
@@ -168,20 +159,26 @@ export default {
   -webkit-animation-delay: -0.16s;
   animation-delay: -0.16s;
   margin-top: 30vh;
-}
-.loader:before,
-.loader:after {
-  position: absolute;
-  top: 0;
-  content: '';
-}
-.loader:before {
-  left: -1.5em;
-  -webkit-animation-delay: -0.32s;
-  animation-delay: -0.32s;
-}
-.loader:after {
-  left: 1.5em;
+  &, &:before, &:after {
+    background: #3490dc;
+    -webkit-animation: load1 1s infinite ease-in-out;
+    animation: load1 1s infinite ease-in-out;
+    width: 1em;
+    height: 4em;
+  }
+  &:before, &:after{
+    position: absolute;
+    top: 0;
+    content: '';
+  }
+  &:before {
+    left: -1.5em;
+    -webkit-animation-delay: -0.32s;
+    animation-delay: -0.32s;
+  }
+  &:after {
+    left: 1.5em;
+  }
 }
 @-webkit-keyframes load1 {
   0%,
