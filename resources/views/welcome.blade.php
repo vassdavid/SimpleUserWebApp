@@ -4,11 +4,13 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
-        <title>Interview Project</title>
+        <title>Simple User Web App</title>
         <base href="/" target="_self">
+        {{--  Meta  --}}
+        <meta name="description" content="Simple User Web App">
+        <meta name="keywords" content="vuejs, laravel, phpunit, babel, bootstrap-vue">
+        <meta name="author" content="David Vass">
 
-
-        <!-- Styles -->
         <link href="{{asset('css/app.css')}}" media="all" rel="stylesheet" type="text/css" />
     </head>
     <body>
