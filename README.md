@@ -3,9 +3,11 @@ This Web App able to register user with name, birthdate and multiple email. The 
 ## Features
 ### List users
 List all user with pagination
+
 url : [project domain]/#/users
 ### Create user
 Create new user
+
 url: [project domain]/#/CreateUser
 # Installation
 ## Server Requirements
@@ -28,11 +30,7 @@ url: [project domain]/#/CreateUser
  7. Run app `php artisan serve`
 
 More info: [laravel installation](https://laravel.com/docs/5.8/installation)
-<<<<<<< HEAD
 ## Development
-=======
-## Devevolopment
->>>>>>> e94a9b4f6a917d10e6907e334f9ae36c21d42260
 The `php artisan serve` command isn't enough to run the test functions.
 Must run in a web server!
 ### Testing
@@ -44,8 +42,4 @@ The project also have factories and database seeder.
 ##### Database seeder
  If you fill generated users the database rund the`php artisan db:seed`command.
  ##### Unit and feature test
-<<<<<<< HEAD
 Run  `phpunit` command if you install phpunit in globally, else run  `vendor/bin/phpunit` in project folder.
-=======
-Run  `phpunit` command if you install phpunit in globally, else run  `vendor/bin/phpunit` in project folder. 
->>>>>>> e94a9b4f6a917d10e6907e334f9ae36c21d42260
