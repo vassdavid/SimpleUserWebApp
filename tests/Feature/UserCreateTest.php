@@ -95,7 +95,10 @@ class UserTest extends TestCase
       $response->assertStatus(422);
 
     }
-
+    /**
+     * Test with empty emails (negative testing)
+     * @return void
+     */
     public function testMissingEmails() {
       $makedUser = $this->makeUser();
 
@@ -186,6 +189,12 @@ class UserTest extends TestCase
       }
     }
 
+    /**
+     * test invaild dates:
+     * - bad format
+     * - tomorrow date
+     * @return void
+     */
     public function testInvaildDateFormats() {
       //create neccesary models with factory
       $makedUser = $this->makeUser();
@@ -208,7 +217,10 @@ class UserTest extends TestCase
       $response2->assertStatus(422);
     }
 
-
+    /**
+     * test wrong email format
+     * @return void
+     */
     public function testInvaildEmailFormats() {
       //create neccesary models with factory
       $makedUser = $this->makeUser();
@@ -261,6 +273,11 @@ class UserTest extends TestCase
       ];
     }
 
+    /**
+     * Make
+     * @param  Illuminate\Database\Eloquent\Collection $emails input emails
+     * @return [type]         [description]
+     */
     private function makeSimpleEmailArray($emails) {
       return $this->makeSimpleArrayByKey($emails, 'email');
     }
