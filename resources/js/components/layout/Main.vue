@@ -11,5 +11,12 @@
     </div>
   </div>
 </template>
-<style lang="scss" scoped>
-</style>
+<script>
+
+const LeftSidebar = () => import('../LeftSidebar')
+export default {
+  components: {
+    LeftSidebar
+  }
+}
+</script>
