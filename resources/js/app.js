@@ -22,12 +22,14 @@ Vue.use(BootstrapVue)
 const CreateUser = () => import('./components/CreateUser')
 const NotFound = () => import('./components/NotFound')
 const ListUsers = () => import('./components/ListUsers')
+const LeftSidebar = () => import('./components/LeftSidebar')
 const Main = () => import('./components/layout/Main')
 
 //registering components:
 Vue.component( 'ListUsers', ListUsers )
 Vue.component( 'CreateUser', CreateUser )
 Vue.component( 'Main', Main )
+Vue.component( 'LeftSidebar', LeftSidebar )
 
 const routes = [
   {

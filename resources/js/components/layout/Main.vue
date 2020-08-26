@@ -13,7 +13,6 @@
 </template>
 <script>
 
-const LeftSidebar = () => import('../LeftSidebar')
 export default {
   components: {
     LeftSidebar
